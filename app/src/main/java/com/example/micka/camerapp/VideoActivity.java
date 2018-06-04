@@ -1,9 +1,12 @@
 package com.example.micka.camerapp;
 
+import android.app.ActionBar;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -19,8 +22,16 @@ public class VideoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        //hide top bar
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
 
         videoView = (VideoView) findViewById(R.id.vv_video_holder);
     }
@@ -32,7 +43,6 @@ public class VideoActivity extends AppCompatActivity {
         Log.i(TAG,uri.toString());
 
         videoView.setVideoURI(uri);
-        videoView.setMediaController(new MediaController(this));
         videoView.requestFocus();
         videoView.start();
 
