@@ -1,6 +1,7 @@
 package com.example.micka.camerapp;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Camera;
 
@@ -28,6 +29,7 @@ import org.videolan.libvlc.MediaPlayer;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VideoActivity extends AppCompatActivity implements IVLCVout.Callback{
     private static final Uri SAMPLE_URL = Uri.parse("rtsp://admin:3edcvfr4@91.226.253.6:30554/cam/realmonitor?channel=1&subtype=0");
@@ -40,6 +42,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
     private LibVLC libVLC=null;
     private MediaPlayer mMediaPlayer = null;
     private static final ArrayList<String> args = new ArrayList<>();
+    HashMap<String,Integer> newSurfaceSize;
     private int  mVideoHeight,mVideoWidth,mVideoVisibleHeight,mVideoVisibleWidth,mVideoSarNum,mVideoSarDen=0;
 
 
@@ -58,16 +61,23 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         libVLC = new LibVLC(getApplicationContext(),args);
         mMediaPlayer = new MediaPlayer(libVLC);
 
-
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        Log.i("@@@@@@@width",String.valueOf(dm.widthPixels));
-        Log.i("@@@@@@@height",String.valueOf(dm.heightPixels));
+
+
+        newSurfaceSize = Utils.getPrefearedSize(1920,1080,dm.widthPixels,dm.heightPixels);
+
+        Log.i("@@@@@@@height@@@@@",String.valueOf( newSurfaceSize.get("height")));
+        Log.i("@@@@@@@width@@@@@",String.valueOf( newSurfaceSize.get("width")));
+        int newWidth = newSurfaceSize.get("width");
+        int newHeight = newSurfaceSize.get("height");
+
 
         mainContainer = (RelativeLayout) findViewById(R.id.rl_main_container);
         progressBar = (ProgressBar) findViewById(R.id.pb_video_load);
         mVideoSurface = (SurfaceView) findViewById(R.id.vv_video_holder);
 
+        mVideoSurface.getHolder().setFixedSize(newWidth,newHeight);
     }
 
     @Override
