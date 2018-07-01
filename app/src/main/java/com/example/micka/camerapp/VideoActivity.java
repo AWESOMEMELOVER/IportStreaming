@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
@@ -69,26 +70,31 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         mMediaPlayer = new MediaPlayer(libVLC);
 
 
-        HashMap<String,Double> surfaceSize = Utils.scallingByScreenSize(1920,1080,getApplicationContext());
 
-        Log.i("@@@surfaceWidth", String.valueOf(surfaceSize.get("width")));
+
+       /* Log.i("@@@surfaceWidth", String.valueOf(surfaceSize.get("width")));
         Log.i("@@@surfaceHeight",String.valueOf(surfaceSize.get("height")));
 
 
         Integer surfaceWidth =  surfaceSize.get("width").intValue();
-        Integer surfaceHeight =  surfaceSize.get("height").intValue();
+        Integer surfaceHeight =  surfaceSize.get("height").intValue();*/
 
         mainContainer = (RelativeLayout) findViewById(R.id.rl_main_container);
         progressBar = (ProgressBar) findViewById(R.id.pb_video_load);
         mVideoSurface = (SurfaceView) findViewById(R.id.vv_video_holder);
 
-        int test1 = Utils.pxFromDp(getApplicationContext(),surfaceWidth);
+
+        Utils.setVideoSize(1920,1080,getApplicationContext(),mVideoSurface);
+       /* int test1 = Utils.pxFromDp(getApplicationContext(),surfaceWidth);
         int test2 = Utils.pxFromDp(getApplicationContext(),surfaceHeight);
 
         Log.i("@@@testheight",String.valueOf(surfaceHeight));
         Log.i("@@@testwidth",String.valueOf(surfaceWidth));
 
-        mVideoSurface.getHolder().setFixedSize(surfaceWidth,surfaceHeight);
+        mVideoSurface.getHolder().setFixedSize(surfaceWidth,surfaceHeight);*/
+      /*  ViewGroup.LayoutParams param = mainContainer.getLayoutParams();
+        param.height= surfaceHeight;
+        param.width =surfaceWidth ;*/
 
     }
 

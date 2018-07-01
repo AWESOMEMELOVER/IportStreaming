@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.SurfaceView;
 
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ import java.util.HashMap;
 
 public class Utils {
 
-    public static HashMap<String,Double> scallingByScreenSize(int bufCameraWidth, int bufCameraHeight, Context ctx){
+   /* public static HashMap<String,Double> scallingByScreenSize(int bufCameraWidth, int bufCameraHeight, Context ctx){
         HashMap<String,Double> result = new HashMap<>();
 
         double screenWidth = (double)(SharePref.getInstance(ctx).getScreenWidth());
@@ -53,7 +54,45 @@ public class Utils {
             return result;
         }
         return result;
-    }
+    }*/
+
+   public static void setVideoSize(int videoWidth, int videoHeight, Context ctx, SurfaceView surfaceView){
+       float videoProportion = (float) videoWidth/(float) videoHeight;
+       Log.i("@@VIDEO_PROPORTION",String.valueOf(videoProportion));
+
+       int  screenWidth = SharePref.getInstance(ctx).getScreenWidth();
+       Log.i("@@SCREEN_WIDTH",String.valueOf(screenWidth));
+       int  screenHeight = SharePref.getInstance(ctx).getScreenHeight();
+       Log.i("@@SCREEN_HEIGHT",String.valueOf(screenHeight));
+       float screenProportion = (float) screenWidth / (float) screenHeight;
+       Log.i("@@SCREEN_PROPORTION",String.valueOf(screenProportion));
+
+       android.view.ViewGroup.LayoutParams lp = surfaceView.getLayoutParams();
+
+
+
+
+       if (videoProportion > screenProportion) {
+           if(screenHeight >= videoHeight && screenWidth>=videoWidth){
+                lp.width = screenWidth;
+                lp.height = screenHeight;
+               Log.i("@@surfaceView WIDTH1",String.valueOf(lp.width));
+               Log.i("@@surfaceView HEIGHT1",String.valueOf(lp.height));
+           }else if(screenWidth<videoWidth && screenHeight >= videoHeight) {
+               lp.width = screenWidth;
+               lp.height = (int) ((float) screenWidth / videoProportion);
+               Log.i("@@surfaceView WIDTH2",String.valueOf(lp.width));
+               Log.i("@@surfaceView HEIGHT2",String.valueOf(lp.height));
+           }else if(screenHeight < videoHeight && screenWidth>=videoWidth){
+               lp.width = (int) ((float) screenWidth / videoProportion);
+               lp.height = screenHeight;
+               Log.i("@@surfaceView WIDTH3",String.valueOf(lp.width));
+               Log.i("@@surfaceView HEIGHT3",String.valueOf(lp.height));
+           }
+       }
+       // Commit the layout parameters
+       surfaceView.setLayoutParams(lp);
+   }
 
     public static int dpFromPx(final Context context, final int px) {
         return (int) (px / context.getResources().getDisplayMetrics().density);
