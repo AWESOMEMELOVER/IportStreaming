@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.damavandi:android-vlc-lib-1.0.1">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-vlc-lib-1.0.1.aar/940265d20d082ec12c248c3814fb8965/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-vlc-lib-1.0.1.aar/940265d20d082ec12c248c3814fb8965/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.damavandi/android-vlc-lib/1.0.1/43bea2a4e831d3e32e199b450178c88929d6c26d/android-vlc-lib-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

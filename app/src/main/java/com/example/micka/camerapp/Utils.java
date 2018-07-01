@@ -13,28 +13,53 @@ import java.util.HashMap;
 
 public class Utils {
 
-    public static HashMap<String,Integer> getPrefearedSize(int translatedWidth, int translatedHeight, int screenWidth,int screenHeight){
+    public static HashMap<String,Double> scallingByScreenSize(int bufCameraWidth, int bufCameraHeight, Context ctx){
+        HashMap<String,Double> result = new HashMap<>();
 
-        HashMap<String,Integer> preferedSize = new HashMap<>();
+        double screenWidth = (double)(SharePref.getInstance(ctx).getScreenWidth());
+        double screenHeight = (double) (SharePref.getInstance(ctx).getScreenHeight());
 
+        double cameraWidth = (double) bufCameraWidth;
+        double cameraHeight = (double)bufCameraHeight;
 
-        Log.i("@@@@@@@width",String.valueOf(screenWidth));
-        Log.i("@@@@@@@height",String.valueOf(screenHeight));
+        Log.i("@@DOUBLEWIDTH",String.valueOf(screenWidth));
+        Log.i("@@DOUBLEHEIGHT",String.valueOf(screenHeight));
 
-
-
-        if(translatedHeight == screenHeight && translatedWidth==screenWidth){
-            preferedSize.put("height",translatedHeight);
-            preferedSize.put("width",translatedWidth);
+        Log.i("@@DoubleCameraWidth",String.valueOf(cameraWidth));
+        Log.i("@@DoubleCameraHeight",String.valueOf(cameraHeight));
+       if(screenWidth >= cameraWidth && screenHeight >= cameraHeight){
+            result.put("width",cameraWidth);
+            result.put("height",cameraHeight);
+            return result;
+        }else if(screenWidth<cameraWidth && screenHeight>=cameraHeight){
+            double coeficient = cameraHeight/cameraWidth;
+            double newWidth = screenWidth*coeficient;
+            double newHeight = screenHeight*coeficient;
+            result.put("width",newWidth);
+            result.put("height",newHeight);
+            return result;
+        }else if (screenWidth>= cameraWidth && screenHeight<cameraHeight){
+            double coeficient = cameraHeight/cameraWidth;
+           double newHeight = screenHeight*coeficient;
+            result.put("width",cameraWidth);
+            result.put("height",newHeight);
+            return result;
+        }else if(screenWidth<cameraWidth && screenHeight<cameraHeight){
+           double coeficient = cameraHeight/cameraWidth;
+           double newWidth = screenWidth*coeficient;
+           double newHeight = screenHeight*coeficient;
+            result.put("width",newWidth);
+            result.put("height",newHeight);
+            return result;
         }
-        else if(translatedHeight!=screenHeight && translatedWidth != screenWidth){
-            double coef = translatedHeight/translatedWidth;
-            double newWidth =  translatedWidth*coef;
-            Log.i("@@@@@@@newWidth",String.valueOf(newWidth));
-           // preferedSize.put("width",newWidth);
-            preferedSize.put("height",translatedHeight);
-        }
-            return preferedSize;
+        return result;
     }
 
+    public static int dpFromPx(final Context context, final int px) {
+        return (int) (px / context.getResources().getDisplayMetrics().density);
+    }
+
+    public static int pxFromDp(final Context context, final int dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
 }

@@ -3,6 +3,7 @@ package com.example.micka.camerapp;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Camera;
 
 import android.net.Uri;
@@ -38,6 +39,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
     private RelativeLayout mainContainer;
     private ProgressBar progressBar;
     private Uri uri;
+    private SharePref sharePref;
     private int currentCamera;
     private LibVLC libVLC=null;
     private MediaPlayer mMediaPlayer = null;
@@ -51,33 +53,43 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-
+        sharePref = SharePref.getInstance(getApplicationContext());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+
+        int screenWidth = sharePref.getScreenWidth();
+        int screenHeight = sharePref.getScreenHeight();
+
+        Log.i("@@@WIDTH_AND_HEIGHT@@@","is : "+String.valueOf(screenWidth)+" "+String.valueOf(screenHeight));
 
         args.add("--rtsp-tcp");
 
         libVLC = new LibVLC(getApplicationContext(),args);
         mMediaPlayer = new MediaPlayer(libVLC);
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        HashMap<String,Double> surfaceSize = Utils.scallingByScreenSize(1920,1080,getApplicationContext());
+
+        Log.i("@@@surfaceWidth", String.valueOf(surfaceSize.get("width")));
+        Log.i("@@@surfaceHeight",String.valueOf(surfaceSize.get("height")));
 
 
-        newSurfaceSize = Utils.getPrefearedSize(1920,1080,dm.widthPixels,dm.heightPixels);
-
-        Log.i("@@@@@@@height@@@@@",String.valueOf( newSurfaceSize.get("height")));
-        Log.i("@@@@@@@width@@@@@",String.valueOf( newSurfaceSize.get("width")));
-        int newWidth = newSurfaceSize.get("width");
-        int newHeight = newSurfaceSize.get("height");
-
+        Integer surfaceWidth =  surfaceSize.get("width").intValue();
+        Integer surfaceHeight =  surfaceSize.get("height").intValue();
 
         mainContainer = (RelativeLayout) findViewById(R.id.rl_main_container);
         progressBar = (ProgressBar) findViewById(R.id.pb_video_load);
         mVideoSurface = (SurfaceView) findViewById(R.id.vv_video_holder);
 
-        mVideoSurface.getHolder().setFixedSize(newWidth,newHeight);
+        int test1 = Utils.pxFromDp(getApplicationContext(),surfaceWidth);
+        int test2 = Utils.pxFromDp(getApplicationContext(),surfaceHeight);
+
+        Log.i("@@@testheight",String.valueOf(surfaceHeight));
+        Log.i("@@@testwidth",String.valueOf(surfaceWidth));
+
+        mVideoSurface.getHolder().setFixedSize(surfaceWidth,surfaceHeight);
+
     }
 
     @Override
