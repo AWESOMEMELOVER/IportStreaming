@@ -166,7 +166,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
             if(currentCamera != Utils.getCameraUri().size()){
                 currentCamera++;
                 com.example.micka.camerapp.Entity.Camera camera = Utils.getCameraUri().get(currentCamera);
-                libVLC.
+
             }
         }
 
