@@ -37,8 +37,8 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
     private static final Uri SAMPLE_URL = Uri.parse("rtsp://admin:3edcvfr4@91.226.253.6:30554/cam/realmonitor?channel=1&subtype=0");
     private final String TAG = "VIDEO URL: ";
     private SurfaceView mVideoSurface;
-    private RelativeLayout mainContainer;
-    private ProgressBar progressBar;
+   /* private RelativeLayout mainContainer;
+    private ProgressBar progressBar;*/
     private Uri uri;
     private SharePref sharePref;
     private int currentCamera;
@@ -59,10 +59,11 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        int screenWidth = sharePref.getScreenWidth();
-        int screenHeight = sharePref.getScreenHeight();
 
-        Log.i("@@@WIDTH_AND_HEIGHT@@@","is : "+String.valueOf(screenWidth)+" "+String.valueOf(screenHeight));
+        int orientation =getResources().getConfiguration().orientation;
+
+        Log.i("@@@orientation",String.valueOf(orientation));
+
 
         args.add("--rtsp-tcp");
 
@@ -70,40 +71,23 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         mMediaPlayer = new MediaPlayer(libVLC);
 
 
-
-
-       /* Log.i("@@@surfaceWidth", String.valueOf(surfaceSize.get("width")));
-        Log.i("@@@surfaceHeight",String.valueOf(surfaceSize.get("height")));
-
-
-        Integer surfaceWidth =  surfaceSize.get("width").intValue();
-        Integer surfaceHeight =  surfaceSize.get("height").intValue();*/
-
-        mainContainer = (RelativeLayout) findViewById(R.id.rl_main_container);
-        progressBar = (ProgressBar) findViewById(R.id.pb_video_load);
         mVideoSurface = (SurfaceView) findViewById(R.id.vv_video_holder);
-
-
-        Utils.setVideoSize(1920,1080,getApplicationContext(),mVideoSurface);
-       /* int test1 = Utils.pxFromDp(getApplicationContext(),surfaceWidth);
-        int test2 = Utils.pxFromDp(getApplicationContext(),surfaceHeight);
-
-        Log.i("@@@testheight",String.valueOf(surfaceHeight));
-        Log.i("@@@testwidth",String.valueOf(surfaceWidth));
-
-        mVideoSurface.getHolder().setFixedSize(surfaceWidth,surfaceHeight);*/
-      /*  ViewGroup.LayoutParams param = mainContainer.getLayoutParams();
-        param.height= surfaceHeight;
-        param.width =surfaceWidth ;*/
-
+        Utils.setVideoSize(1920,1080,getApplicationContext(),mVideoSurface,orientation);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        progressBar.setVisibility(View.VISIBLE);
+       // progressBar.setVisibility(View.VISIBLE);
         initVideoView();
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("@@@ONDESTROY ","CHANGE ORIENTATION");
     }
 
     private void initVideoView(){
@@ -118,30 +102,6 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         media.release();
         mMediaPlayer.play();
     }
-
-    /*private OnSwipeTouchListener initVideoViewTouchEventHandler (Context ctx){
-        OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(ctx) {
-            public void onSwipeLeft() {
-
-                progressBar.setVisibility(View.VISIBLE);
-                currentCamera--;
-                videoView.setVideoURI(CameraURI.uriList.get(currentCamera));
-                videoView.start();
-            }
-
-            public void onSwipeRight() {
-
-                progressBar.setVisibility(View.VISIBLE);
-                currentCamera++;
-                videoView.setVideoURI(CameraURI.uriList.get(currentCamera));
-                videoView.start();
-
-
-            }
-        };
-        return onSwipeTouchListener;
-    }*/
-
 
     @Override
     public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
