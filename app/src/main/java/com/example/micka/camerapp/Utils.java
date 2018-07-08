@@ -2,10 +2,14 @@ package com.example.micka.camerapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
 
+import com.example.micka.camerapp.Entity.Camera;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,47 +18,6 @@ import java.util.HashMap;
 
 public class Utils {
 
-   /* public static HashMap<String,Double> scallingByScreenSize(int bufCameraWidth, int bufCameraHeight, Context ctx){
-        HashMap<String,Double> result = new HashMap<>();
-
-        double screenWidth = (double)(SharePref.getInstance(ctx).getScreenWidth());
-        double screenHeight = (double) (SharePref.getInstance(ctx).getScreenHeight());
-
-        double cameraWidth = (double) bufCameraWidth;
-        double cameraHeight = (double)bufCameraHeight;
-
-        Log.i("@@DOUBLEWIDTH",String.valueOf(screenWidth));
-        Log.i("@@DOUBLEHEIGHT",String.valueOf(screenHeight));
-
-        Log.i("@@DoubleCameraWidth",String.valueOf(cameraWidth));
-        Log.i("@@DoubleCameraHeight",String.valueOf(cameraHeight));
-       if(screenWidth >= cameraWidth && screenHeight >= cameraHeight){
-            result.put("width",cameraWidth);
-            result.put("height",cameraHeight);
-            return result;
-        }else if(screenWidth<cameraWidth && screenHeight>=cameraHeight){
-            double coeficient = cameraHeight/cameraWidth;
-            double newWidth = screenWidth*coeficient;
-            double newHeight = screenHeight*coeficient;
-            result.put("width",newWidth);
-            result.put("height",newHeight);
-            return result;
-        }else if (screenWidth>= cameraWidth && screenHeight<cameraHeight){
-            double coeficient = cameraHeight/cameraWidth;
-           double newHeight = screenHeight*coeficient;
-            result.put("width",cameraWidth);
-            result.put("height",newHeight);
-            return result;
-        }else if(screenWidth<cameraWidth && screenHeight<cameraHeight){
-           double coeficient = cameraHeight/cameraWidth;
-           double newWidth = screenWidth*coeficient;
-           double newHeight = screenHeight*coeficient;
-            result.put("width",newWidth);
-            result.put("height",newHeight);
-            return result;
-        }
-        return result;
-    }*/
 
    public static void setVideoSize(int videoWidth, int videoHeight, Context ctx, SurfaceView surfaceView ,int orientation){
        int screenWidth=0;
@@ -114,5 +77,13 @@ public class Utils {
 
     public static int pxFromDp(final Context context, final int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    public static ArrayList<Camera> getCameraUri(){
+       ArrayList<Camera> result = new ArrayList<>();
+       result.add(new Camera(1, Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0")));
+       result.add(new Camera(2,Uri.parse("rtsp://zmserver:4hhWHFZDY1@10.10.10.65:10554/profile1")));
+       result.add(new Camera(3,Uri.parse("rtsp://admin:3edcvfr4@10.10.10.12:554/Streaming/Channels/101")));
+       return result;
     }
 }
