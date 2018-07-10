@@ -4,16 +4,21 @@ import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
+
+import com.example.micka.camerapp.R;
 
 public class OnSwipeTouchListener implements View.OnTouchListener {
 
     private final GestureDetector gestureDetector;
     private Context ctx;
+    private View view;
 
-    public OnSwipeTouchListener(Context ctx){
+    public OnSwipeTouchListener(Context ctx,View view){
         this.ctx=ctx;
         gestureDetector = new GestureDetector(ctx,new GestureListener());
+        this.view = view;
     }
 
     @Override
@@ -22,8 +27,8 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+        private static final int SWIPE_THRESHOLD = 50;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 50;
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -63,9 +68,13 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public void onSwipeRight() {
+        view.startAnimation(AnimationUtils.loadAnimation(ctx, R.anim.right_to_left));
+       // view.startAnimation(AnimationUtils.loadAnimation(ctx, R.anim.left_to_right));
     }
 
     public void onSwipeLeft() {
+        view.startAnimation(AnimationUtils.loadAnimation(ctx,R.anim.left_to_right));
+       // view.startAnimation(AnimationUtils.loadAnimation(ctx, R.anim.right_to_left));
     }
 
     public void onSwipeTop() {

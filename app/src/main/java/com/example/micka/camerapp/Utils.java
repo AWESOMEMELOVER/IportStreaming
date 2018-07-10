@@ -83,7 +83,6 @@ public class Utils {
        ArrayList<Camera> result = new ArrayList<>();
        result.add(new Camera(1, Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0")));
        result.add(new Camera(2,Uri.parse("rtsp://zmserver:4hhWHFZDY1@10.10.10.65:10554/profile1")));
-       result.add(new Camera(3,Uri.parse("rtsp://admin:3edcvfr4@10.10.10.12:554/Streaming/Channels/101")));
        return result;
     }
 }

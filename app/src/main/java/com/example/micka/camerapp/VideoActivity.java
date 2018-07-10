@@ -5,8 +5,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Camera;
 
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,6 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,112 +38,198 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VideoActivity extends AppCompatActivity implements IVLCVout.Callback{
-    private static final Uri SAMPLE_URL = Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0");
-    private final String TAG = "VIDEO URL: ";
-    private SurfaceView mVideoSurface;
-   /* private RelativeLayout mainContainer;
-    private ProgressBar progressBar;*/
-    private Uri uri;
-    private SharePref sharePref;
-    private int currentCamera=0;
-    private LibVLC libVLC=null;
+    private static final ArrayList<com.example.micka.camerapp.Entity.Camera> cameraList = Utils.getCameraUri();
+    private static final Uri SAMPLE_URL = cameraList.get(0).getUri();
+
+    private int currentCamera = 0;
+
+    public final static String TAG = "CameraApp/VideoActivity";
+
+    private SurfaceView mSurface;
+    private SurfaceHolder holder;
+    private SwipeRefreshLayout refreshLayout;
+
+    private LibVLC libVLC;
     private MediaPlayer mMediaPlayer = null;
-    private static final ArrayList<String> args = new ArrayList<>();
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private int  mVideoHeight,mVideoWidth,mVideoVisibleHeight,mVideoVisibleWidth,mVideoSarNum,mVideoSarDen=0;
 
+    private int mVideoWidth;
+    private int mVideoHeight;
+    private final static int VideoSizeChange =-1;
 
-    @SuppressLint("ClickableViewAccessibility")
+    /*************
+     * Activity
+     *************/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        sharePref = SharePref.getInstance(getApplicationContext());
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
 
-        int orientation =getResources().getConfiguration().orientation;
+        mSurface = (SurfaceView) findViewById(R.id.vv_video_holder);
+        holder = mSurface.getHolder();
+        refreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_container);
 
-        Log.i("@@@orientation",String.valueOf(orientation));
-
-
-        args.add("--rtsp-tcp");
-
-        libVLC = new LibVLC(getApplicationContext(),args);
-        mMediaPlayer = new MediaPlayer(libVLC);
-
-
-        mVideoSurface = (SurfaceView) findViewById(R.id.vv_video_holder);
-        Utils.setVideoSize(1280,720,getApplicationContext(),mVideoSurface,orientation);
-
-        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_container);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-
-                    }
-                }, 5000);
-
-            }
-        });
-
-        swipeRefreshLayout.setColorScheme(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-
-
-        mVideoSurface.setOnTouchListener(new OnSwipeTouchListenerImpl(this));
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-       // progressBar.setVisibility(View.VISIBLE);
-        initVideoView();
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setSize(mVideoWidth,mVideoHeight);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        createPlayer(SAMPLE_URL);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releasePlayer();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("@@@ONDESTROY ","CHANGE ORIENTATION");
+        releasePlayer();
     }
 
-    private void initVideoView(){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayoutImpl());
+    }
 
-        final IVLCVout vlcVout = mMediaPlayer.getVLCVout();
-        currentCamera = 1;
-        vlcVout.setVideoView(mVideoSurface);
-        vlcVout.attachViews();
-        mMediaPlayer.getVLCVout().addCallback(this);
-        Media media = new Media(libVLC,SAMPLE_URL);
-        mMediaPlayer.setMedia(media);
-        media.release();
-        mMediaPlayer.play();
+    /*************
+     * Surface
+     *************/
+    private void setSize(int width, int height) {
+        mVideoWidth = width;
+        mVideoHeight = height;
+        if (mVideoWidth * mVideoHeight <= 1)
+            return;
+
+        if(holder == null || mSurface == null)
+            return;
+
+        // get screen size
+        int w = getWindow().getDecorView().getWidth();
+        int h = getWindow().getDecorView().getHeight();
+
+        // getWindow().getDecorView() doesn't always take orientation into
+        // account, we have to correct the values
+        boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        if (w > h && isPortrait || w < h && !isPortrait) {
+            int i = w;
+            w = h;
+            h = i;
+        }
+
+        float videoAR = (float) mVideoWidth / (float) mVideoHeight;
+        float screenAR = (float) w / (float) h;
+
+        if (screenAR < videoAR)
+            h = (int) (w / videoAR);
+        else
+            w = (int) (h * videoAR);
+
+        // force surface buffer size
+        holder.setFixedSize(mVideoWidth, mVideoHeight);
+
+        // set display size
+        ViewGroup.LayoutParams lp = mSurface.getLayoutParams();
+        lp.width = w;
+        lp.height = h;
+        mSurface.setLayoutParams(lp);
+        mSurface.invalidate();
+    }
+
+    /*************
+     * Player
+     *************/
+
+    private void createPlayer(Uri media) {
+        releasePlayer();
+        try {
+            if (media != null) {
+                Toast toast = Toast.makeText(this, media.toString(), Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0,
+                        0);
+                toast.show();
+            }
+
+            // Create LibVLC
+            // TODO: make this more robust, and sync with audio demo
+            ArrayList<String> options = new ArrayList<String>();
+            //options.add("--subsdec-encoding <encoding>");
+            options.add("--aout=opensles");
+            options.add("--audio-time-stretch"); // time stretching
+            options.add("-vvv"); // verbosity
+            options.add("--http-reconnect");
+            options.add("--network-caching="+6*1000);
+            options.add("--rtsp-tcp");
+            libVLC = new LibVLC(getApplicationContext(),options);
+
+
+
+            // Create media player
+            mMediaPlayer = new MediaPlayer(libVLC);
+
+
+            // Set up video output
+            final IVLCVout vout = mMediaPlayer.getVLCVout();
+            vout.setVideoView(mSurface);
+            //vout.setSubtitlesView(mSurfaceSubtitles);
+            vout.addCallback(this);
+            vout.attachViews();
+
+            Media m = new Media(libVLC, media);
+            mMediaPlayer.setMedia(m);
+            mMediaPlayer.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+
+       mSurface.setOnTouchListener(new OnSwipeTouchListenerImpl(getApplicationContext()));
+    }
+
+    private void releasePlayer() {
+        if (libVLC == null)
+            return;
+        mMediaPlayer.stop();
+        final IVLCVout vout = mMediaPlayer.getVLCVout();
+        vout.removeCallback(this);
+        vout.detachViews();
+        holder = null;
+        libVLC.release();
+        libVLC = null;
+
+        mVideoWidth = 0;
+        mVideoHeight = 0;
     }
 
     @Override
     public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+        if (width * height == 0)
+            return;
+
+        // store video size
         mVideoWidth = width;
         mVideoHeight = height;
-        mVideoVisibleWidth = visibleWidth;
-        mVideoVisibleHeight = visibleHeight;
-        mVideoSarNum = sarNum;
-        mVideoSarDen = sarDen;
+        setSize(mVideoWidth, mVideoHeight);
     }
 
     @Override
@@ -152,21 +243,22 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
     }
 
 
+
     private class OnSwipeTouchListenerImpl extends OnSwipeTouchListener{
 
         public OnSwipeTouchListenerImpl(Context ctx) {
-            super(ctx);
+            super(ctx,mSurface);
         }
 
         @Override
         public void onSwipeRight() {
             super.onSwipeRight();
             Toast.makeText(VideoActivity.this,"RIGHT",Toast.LENGTH_SHORT).show();
-            mVideoSurface.startAnimation(AnimationUtils.loadAnimation(VideoActivity.this,R.anim.left_to_right));
-            if(currentCamera != Utils.getCameraUri().size()){
+            if(currentCamera!= cameraList.size()) {
                 currentCamera++;
-                com.example.micka.camerapp.Entity.Camera camera = Utils.getCameraUri().get(currentCamera);
-
+                Log.i("@@@CURRENTCAMERA",String.valueOf(currentCamera));
+                releasePlayer();
+                createPlayer(cameraList.get(currentCamera).getUri());
             }
         }
 
@@ -174,9 +266,11 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         public void onSwipeLeft() {
             super.onSwipeLeft();
             Toast.makeText(VideoActivity.this,"LEFT",Toast.LENGTH_SHORT).show();
-            mVideoSurface.startAnimation(AnimationUtils.loadAnimation(VideoActivity.this,R.anim.right_to_left));
-            if(currentCamera!=0){
-
+            if(currentCamera!=0) {
+                currentCamera--;
+                Log.i("@@@CURRENTCAMERA",String.valueOf(currentCamera));
+                releasePlayer();
+                createPlayer(cameraList.get(currentCamera).getUri());
             }
         }
 
@@ -193,4 +287,20 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
         }
     }
 
-}
+    private class SwipeRefreshLayoutImpl implements SwipeRefreshLayout.OnRefreshListener{
+        @Override
+        public void onRefresh() {
+            new Handler().postDelayed(new Runnable() {
+                @Override public void run() {
+                    releasePlayer();
+                    createPlayer(SAMPLE_URL);
+                    refreshLayout.setRefreshing(false);
+                }
+            }, 5000);
+
+        }
+        }
+    }
+
+
+
