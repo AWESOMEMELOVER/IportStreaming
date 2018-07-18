@@ -1,47 +1,30 @@
-package com.example.micka.camerapp;
+package com.example.micka.camerapp.Activities;
 
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 
 import android.content.res.Configuration;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
-import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.example.micka.camerapp.EventHandlers.OnPreparedVideoViewListener;
 import com.example.micka.camerapp.EventHandlers.OnSwipeTouchListener;
+import com.example.micka.camerapp.R;
+import com.example.micka.camerapp.Utils.Utils;
 
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
-import java.lang.ref.WeakReference;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class VideoActivity extends AppCompatActivity implements IVLCVout.Callback{
     private static final ArrayList<com.example.micka.camerapp.Entity.Camera> cameraList = Utils.getCameraUri();

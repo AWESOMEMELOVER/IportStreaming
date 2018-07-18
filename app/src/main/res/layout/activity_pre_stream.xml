@@ -4,12 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.LaunchActivity">
+    tools:context=".Activities.PreStreamActivity">
 
-    <ProgressBar
+    <ImageView
+        android:id="@+id/iv_prestream_image"
+        android:layout_width="1050px"
+        android:layout_height="608px" />
+
+    <Button
+        android:layout_below="@id/iv_prestream_image"
+        android:id="@+id/btn_disable_thread"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pb_screen_load"
-        />
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

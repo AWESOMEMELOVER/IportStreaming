@@ -1,10 +1,13 @@
-package com.example.micka.camerapp;
+package com.example.micka.camerapp.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.ProgressBar;
+
+import com.example.micka.camerapp.R;
+import com.example.micka.camerapp.Utils.SharePref;
 
 public class LaunchActivity extends AppCompatActivity {
 

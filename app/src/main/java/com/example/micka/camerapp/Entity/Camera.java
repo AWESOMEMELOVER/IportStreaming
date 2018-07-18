@@ -10,7 +10,11 @@ public class Camera {
 
     private int id;
     private Uri uri;
-    private int width,height;
+
+    public Camera(int id, Uri uri) {
+        this.id = id;
+        this.uri = uri;
+    }
 
     public int getId() {
         return id;
@@ -25,27 +29,6 @@ public class Camera {
     }
 
     public void setUri(Uri uri) {
-        this.uri = uri;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public Camera(int id, Uri uri) {
-        this.id = id;
         this.uri = uri;
     }
 }

@@ -1,16 +1,13 @@
-package com.example.micka.camerapp;
+package com.example.micka.camerapp.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
 
 import com.example.micka.camerapp.Entity.Camera;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by micka on 6/17/2018.

@@ -1,4 +1,4 @@
-package com.example.micka.camerapp;
+package com.example.micka.camerapp.Utils;
 
 import android.app.Activity;
 import android.content.Context;
