@@ -1,6 +1,7 @@
 package com.example.micka.camerapp.Utils;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -40,6 +41,7 @@ public class OkkHttpSingleton {
                 .build();
         Response response = client.newCall(request).execute();
         String stringResponce = response.body().toString();
+        Log.i("@@@LOG RESPOCE",stringResponce);
         JsonObject convertedJson = new Gson().fromJson(stringResponce,JsonObject.class);
         return convertedJson;
     }

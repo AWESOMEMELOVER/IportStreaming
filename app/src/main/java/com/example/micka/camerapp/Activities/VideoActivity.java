@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class VideoActivity extends AppCompatActivity implements IVLCVout.Callback{
     private static final ArrayList<com.example.micka.camerapp.Entity.Camera> cameraList = Utils.getCameraUri();
-    private static final Uri SAMPLE_URL = cameraList.get(0).getUri();
+    private static final Uri SAMPLE_URL =  Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0");
 
     private int currentCamera = 0;
 
@@ -241,7 +241,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
                 currentCamera++;
                 Log.i("@@@CURRENTCAMERA",String.valueOf(currentCamera));
                 releasePlayer();
-                createPlayer(cameraList.get(currentCamera).getUri());
+               // createPlayer(cameraList.get(currentCamera).getUri());
             }
         }
 
@@ -253,7 +253,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
                 currentCamera--;
                 Log.i("@@@CURRENTCAMERA",String.valueOf(currentCamera));
                 releasePlayer();
-                createPlayer(cameraList.get(currentCamera).getUri());
+               // createPlayer(cameraList.get(currentCamera).getUri());
             }
         }
 

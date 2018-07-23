@@ -6,6 +6,11 @@ import android.util.Log;
 import android.view.SurfaceView;
 
 import com.example.micka.camerapp.Entity.Camera;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import org.json.JSONTokener;
 
 import java.util.ArrayList;
 
@@ -78,8 +83,23 @@ public class Utils {
 
     public static ArrayList<Camera> getCameraUri(){
        ArrayList<Camera> result = new ArrayList<>();
-       result.add(new Camera(1, Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0")));
-       result.add(new Camera(2,Uri.parse("rtsp://zmserver:4hhWHFZDY1@10.10.10.65:10554/profile1")));
+      /* result.add(new Camera(1, Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0")));
+       result.add(new Camera(2,Uri.parse("rtsp://zmserver:4hhWHFZDY1@10.10.10.65:10554/profile1")));*/
        return result;
+    }
+
+    public static JsonObject objectToJsonObject(Object object){
+        JsonObject jsonObject = null;
+        if(object instanceof JsonObject){
+            jsonObject = (JsonObject)object;
+        }
+        return jsonObject;
+    }
+    public static JsonArray objectToJsonArray(Object object){
+        JsonArray jsonObject = null;
+        if(object instanceof JsonObject){
+           // jsonObject = new Gson().toJson(object,JsonArray.class);
+        }
+        return jsonObject;
     }
 }
