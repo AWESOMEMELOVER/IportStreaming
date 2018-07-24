@@ -1,6 +1,7 @@
 package com.example.micka.camerapp.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Handler;
@@ -11,8 +12,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.example.micka.camerapp.Entity.Camera;
 import com.example.micka.camerapp.R;
 import com.example.micka.camerapp.Utils.ImageThread;
+import com.example.micka.camerapp.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.Timer;
@@ -26,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PreStreamActivity extends AppCompatActivity {
 
-    private static final String url = "http://91.226.253.10:20080//zm/cgi-bin/nph-zms?mode=single&scale=100&maxfps=5&buffer=1000&monitor=56&user=iport&connkey=602221&rand=1511870800";
+    private String url;
     private ImageView imageView;
     private Handler handler;
     private Context ctx;
@@ -36,6 +40,17 @@ public class PreStreamActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_stream);
+
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
+
+        Intent intent = getIntent();
+        Camera camera = (Camera)intent.getSerializableExtra("transferObject");
+        Log.i("@@@URL", url = Utils.parseToUrl(camera));
+        url = Utils.parseToUrl(camera);
+
+
 
         imageView = (ImageView) findViewById(R.id.iv_prestream_image);
         btn = (Button) findViewById(R.id.btn_disable_thread);
@@ -53,7 +68,7 @@ public class PreStreamActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.scheduleWithFixedDelay(new ImageThread(handler),500,500,TimeUnit.MILLISECONDS);
+        service.scheduleWithFixedDelay(new ImageThread(handler,url),500,500,TimeUnit.MILLISECONDS);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override

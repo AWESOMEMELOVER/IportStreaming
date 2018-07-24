@@ -2,63 +2,59 @@ package com.example.micka.camerapp.Entity;
 
 import android.net.Uri;
 
+import java.io.Serializable;
+
 /**
  * Created by micka on 7/8/2018.
  */
 
 //{"Id":11,"Name":"SNK-CAM-BAZA","ServerId":2,"zmUrl":"http://z.iport.net.ua/"}
-public class Camera {
+    @SuppressWarnings("serial")
+public class Camera implements Serializable{
 
-    private int id;
-    private String uri;
-    private String name;
-    private int serverId;
+    private int Id;
+    private String zmUrl;
+    private String Name;
+    private int ServerId;
 
-   public Camera() {
-
+    Camera() {
     }
 
-    public Camera(int id, String uri, String name, int serverId) {
-        this.id = id;
-        this.uri = uri;
-        this.name = name;
-        this.serverId = serverId;
-    }
 
     public int getId() {
-        return id;
+        return Id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getUri() {
-        return uri;
+        return zmUrl;
     }
 
     public void setUri(String uri) {
-        this.uri = uri;
+        this.zmUrl = uri;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public int getServerId() {
-        return serverId;
+        return ServerId;
     }
 
     public void setServerId(int serverId) {
-        this.serverId = serverId;
+        this.ServerId = serverId;
     }
 
     @Override
     public String toString() {
-       return id+"-"+uri+"-"+name+"-"+serverId;
+       return Id+"-"+zmUrl+"-"+Name+"-"+ServerId;
     }
 }

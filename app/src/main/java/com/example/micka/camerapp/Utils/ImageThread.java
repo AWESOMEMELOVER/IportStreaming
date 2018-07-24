@@ -26,18 +26,22 @@ public class ImageThread implements Runnable {
 
     private Handler handler;
     private Message message;
-
-    public ImageThread(Handler handler){
-        this.handler = handler;
-    }
-
-    private static final String url = "http://91.226.253.10:20080//zm/cgi-bin/nph-zms?mode=single&scale=100&maxfps=5&buffer=1000&monitor=56&user=iport&connkey=602221&rand=1511870800";
+    private String url;
     private static final OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
-    private static final  Request request = new Request.Builder()
-            .url(url)
-            .build();
+    private Request request;
+
+
+    public ImageThread(Handler handler,String url){
+        this.handler = handler;
+        this.url = url;
+        request = new Request.Builder()
+                .url(url)
+                .build();
+    }
+
+
 
 
     @Override

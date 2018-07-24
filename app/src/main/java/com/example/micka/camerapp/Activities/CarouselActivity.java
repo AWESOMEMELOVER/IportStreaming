@@ -1,11 +1,13 @@
 package com.example.micka.camerapp.Activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.micka.camerapp.Entity.Camera;
 import com.example.micka.camerapp.EventHandlers.GetResponce;
@@ -24,6 +26,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
 import java.io.IOException;
@@ -37,7 +40,6 @@ import static com.example.micka.camerapp.Utils.ImageThread.JSON;
 public class CarouselActivity extends AppCompatActivity implements GetResponce<JsonArray,List<Camera>> {
 
     private CarouselView carouselView;
-    int[] sampleImages = {R.drawable.circle, R.drawable.ic_launcher_background, R.drawable.ic_launcher_foreground};
     List<Camera> myList;
     AsyncReuse asyncReuse;
     @Override
@@ -45,22 +47,15 @@ public class CarouselActivity extends AppCompatActivity implements GetResponce<J
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carousel);
 
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
 
 
         carouselView = (CarouselView) findViewById(R.id.carouselView);
 
-
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("user","iport");
         executeServerReq(jsonObject);
-
-
-
-
-
-
-
-
     }
 
     public void executeServerReq(JsonObject jsonObject){
@@ -74,35 +69,32 @@ public class CarouselActivity extends AppCompatActivity implements GetResponce<J
 
     public void getData(JsonArray json) {
         Log.i("@@@CAMERA",json.toString());
-        myList = jsonArrayToList(json);
-        Log.i("@@@ARRAYSIZE", String.valueOf(myList.size()));
-      /*  for(Camera camera:myList)
-            Log.i("@@@CAMERA",camera.toString());*/
+        Log.i("@@@ARRAYSIZE", String.valueOf(json.size()));
+        Type listType = new TypeToken<List<Camera>>(){}.getType();
+        myList = new Gson().fromJson(json.toString(),listType);
+        //carouselView.setPageCount(myList.size());
+        carouselView.setImageListener(new ImageListener() {
+            @Override
+            public void setImageForPosition(int position, ImageView imageView) {
+                Picasso.with(getApplicationContext()).load(Utils.parseToUrl(myList.get(position))).into(imageView);
+            }
+        });
+        carouselView.setPageCount(myList.size());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-       /* carouselView.setPageCount(myList.size());
-        carouselView.setImageListener(new ImageListener() {
+        ImageClickListener imageClickListener = new ImageClickListener() {
             @Override
-            public void setImageForPosition(int position, ImageView imageView) {
-               Picasso.with(getApplicationContext()).load(myList.get(position).getUri()).into(imageView);
+            public void onClick(int position) {
+                Camera camera = myList.get(position);
+                Toast.makeText(CarouselActivity.this, "Clicked item: "+ camera.toString(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(),PreStreamActivity.class);
+                intent.putExtra("transferObject",camera);
+                startActivity(intent);
             }
-        });
-    }*/
-    }
-
-    private List<Camera> jsonArrayToList(JsonArray jsonArray){
-        Gson gson = new Gson();
-        List<Camera> list = new ArrayList<>();
-        /*for(int i =0; i<jsonArray.size();i++){
-            JsonElement jsonObject = jsonArray.get(i);
-           Camera camera = gson.fromJson(jsonObject,new Camera().getClass());
-            Log.i("@@@CAMERATEST",camera.toString());
-            list.add(camera);
-        }*/
-
-        return list;
+        };
+        carouselView.setImageClickListener(imageClickListener );
     }
 }

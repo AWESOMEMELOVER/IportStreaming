@@ -102,4 +102,7 @@ public class Utils {
         }
         return jsonObject;
     }
+    public static String parseToUrl(Camera camera){
+       return camera.getUri()+"zm/cgi-bin/nph-zms?mode=single&scale=100&maxfps=5&buffer=1000&monitor="+camera.getId()+"&user=iport&connkey=602221&rand=1511870800";
+    }
 }
