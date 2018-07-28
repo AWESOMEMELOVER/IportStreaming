@@ -27,8 +27,8 @@ import org.videolan.libvlc.MediaPlayer;
 import java.util.ArrayList;
 
 public class VideoActivity extends AppCompatActivity implements IVLCVout.Callback{
-    private static final ArrayList<com.example.micka.camerapp.Entity.Camera> cameraList = Utils.getCameraUri();
-    private static final Uri SAMPLE_URL =  Uri.parse("rtsp://admin:3edcvfr4@10.10.10.66:554/cam/realmonitor?channel=1&subtype=0");
+    private static final ArrayList<com.example.micka.camerapp.Entity.Camera> cameraList =null;
+    private static final Uri SAMPLE_URL =  Uri.parse("rtsp://admin:3edcvfr4@91.226.253.6:30554");
 
     private int currentCamera = 0;
 
@@ -180,6 +180,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
             Media m = new Media(libVLC, media);
             mMediaPlayer.setMedia(m);
             mMediaPlayer.play();
+
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();

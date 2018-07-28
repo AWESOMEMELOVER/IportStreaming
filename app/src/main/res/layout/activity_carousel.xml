@@ -6,10 +6,16 @@
     android:layout_height="match_parent"
     tools:context="com.example.micka.camerapp.Activities.CarouselActivity">
 
+    <RelativeLayout
+        android:id="@+id/carousel_holder"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+
     <com.synnapps.carouselview.CarouselView
         android:id="@+id/carouselView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:fillColor="#FFFFFFFF"
         app:pageColor="#00000000"
         app:radius="6dp"
@@ -17,6 +23,15 @@
         app:strokeColor="#FF777777"
         app:autoPlay="false"
         app:strokeWidth="1dp"
+        android:scaleType="fitStart"
+        android:adjustViewBounds="true"
         android:layout_centerInParent="true"/>
 
+        <SurfaceView
+            android:id="@+id/sv_stream"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
 </RelativeLayout>

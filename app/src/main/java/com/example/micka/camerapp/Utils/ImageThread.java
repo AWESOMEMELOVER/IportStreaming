@@ -51,6 +51,7 @@ public class ImageThread implements Runnable {
             Bitmap bitmap = doGetRequest(url);
             message = handler.obtainMessage(0,bitmap);
             handler.sendMessage(message);
+            Log.i("@@@CURRENTTHREADNUMBER", String.valueOf(Thread.currentThread().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }

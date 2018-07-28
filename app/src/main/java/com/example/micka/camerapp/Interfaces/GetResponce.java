@@ -1,4 +1,4 @@
-package com.example.micka.camerapp.EventHandlers;
+package com.example.micka.camerapp.Interfaces;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

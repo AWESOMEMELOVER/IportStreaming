@@ -29,8 +29,10 @@ public class LaunchActivity extends AppCompatActivity {
 
         sharedPreference.saveScreenSize(screenWidth,screenHeight);
 
-        Intent intent = new Intent(this,VideoActivity.class);
+        Intent intent = new Intent(this,CarouselActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
 
     }
 

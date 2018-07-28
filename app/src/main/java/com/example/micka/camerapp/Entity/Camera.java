@@ -17,7 +17,7 @@ public class Camera implements Serializable{
     private String Name;
     private int ServerId;
 
-    Camera() {
+    public Camera() {
     }
 
 

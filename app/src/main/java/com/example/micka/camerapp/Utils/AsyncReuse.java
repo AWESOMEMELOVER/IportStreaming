@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.example.micka.camerapp.EventHandlers.GetResponce;
+import com.example.micka.camerapp.Interfaces.GetResponce;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
